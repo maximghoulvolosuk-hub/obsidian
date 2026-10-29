@@ -1,0 +1,34 @@
+name: Build Obsidian Android Library
+
+on: [push, workflow_dispatch]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Android NDK
+        uses: nttld/setup-ndk@v3
+        with:
+          ndk-version: r25b
+          add-to-path: true
+
+      - name: Configure CMake (x86_64 for BlueStacks)
+        run: |
+          mkdir build_bs
+          cd build_bs
+          cmake -DCMAKE_TOOLCHAIN_FILE="$ANDROID_SDK_ROOT/ndk/25.1.8937393/build/cmake/android.toolchain.cmake" \
+                -DANDROID_ABI="x86_64" \
+                -DANDROID_PLATFORM="android-29" \
+                -DCMAKE_BUILD_TYPE=Release ..
+
+      - name: Build Library
+        run: cmake --build build_bs --config Release
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: obsidian-so-file
+          path: build_bs/libobsidian.so
