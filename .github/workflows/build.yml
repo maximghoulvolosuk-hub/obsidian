@@ -11,6 +11,7 @@ jobs:
 
       - name: Install NDK via Android SDK Manager
         run: |
+          yes | sudo ${ANDROID_SDK_ROOT}/cmdline-tools/latest/bin/sdkmanager --licenses
           echo "y" | sudo ${ANDROID_SDK_ROOT}/cmdline-tools/latest/bin/sdkmanager --install "ndk;25.1.8937393"
 
       - name: Configure CMake (x86_64 for BlueStacks)
