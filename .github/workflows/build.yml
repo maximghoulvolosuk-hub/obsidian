@@ -9,16 +9,17 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Install NDK via Android SDK Manager
-        run: |
-          yes | sudo ${ANDROID_SDK_ROOT}/cmdline-tools/latest/bin/sdkmanager --licenses
-          echo "y" | sudo ${ANDROID_SDK_ROOT}/cmdline-tools/latest/bin/sdkmanager --install "ndk;25.1.8937393"
+      - name: Setup Android NDK
+        uses: nttld/setup-ndk@v3
+        with:
+          ndk-version: r25b
+          add-to-path: true
 
       - name: Configure CMake (x86_64 for BlueStacks)
         run: |
           mkdir build_bs
           cd build_bs
-          cmake -DCMAKE_TOOLCHAIN_FILE="${ANDROID_SDK_ROOT}/ndk/25.1.8937393/build/cmake/android.toolchain.cmake" \
+          cmake -DCMAKE_TOOLCHAIN_FILE="$ANDROID_NDK_HOME/build/cmake/android.toolchain.cmake" \
                 -DANDROID_ABI="x86_64" \
                 -DANDROID_PLATFORM="android-29" \
                 -DCMAKE_BUILD_TYPE=Release ..
